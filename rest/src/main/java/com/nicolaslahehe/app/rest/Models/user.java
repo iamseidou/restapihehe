@@ -1,11 +1,24 @@
 package com.nicolaslahehe.app.rest.Models;
 
+import javax.persistence.*;
+
+@Entity
 public class user {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
     private String driver;
+
+    @Column
     private String quote;
+
+    @Column
     private int championships;
+
+    @Column
     private String occupation;
 
 
