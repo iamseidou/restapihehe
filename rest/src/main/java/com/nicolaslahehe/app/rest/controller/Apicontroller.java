@@ -30,6 +30,11 @@ public class Apicontroller {
     public List<user> getUsers() {
         return UserRepo.findAll();
     }
+    
+    @GetMapping(value = "users/{id}")
+    public user getById(@PathVariable long id){
+        return UserRepo.findById(id).get();
+    }
 
     @PostMapping(value = "/save")
     public String saveUser (@RequestBody user user) {
