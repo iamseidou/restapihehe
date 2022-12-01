@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+
+    tools {
+        // Install the Maven version configured as "oh-well-maven" and add it to the path.
+        maven "oh-well-maven"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/iamseidou/restapihehe.git'
+                bat "git checkout main"
+                bat "git branch"
+
+                // Run Maven on a Unix agent.
+                // sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+                // To run Maven on a Windows agent, use
+                bat "mvn -f ./rest/pom.xml -Dmaven.test.failure.ignore=true clean install"
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit '**/rest/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'rest/target/*.jar'
+                }
+            }
+        }
+        stage('Install') {
+            steps {
+                // Just launch that jar, mate.
+                sh "java -jar rest/target/rest-0.0.1-SNAPSHOT.jar &"
+            }
+        }
+        stage('Test') {
+            steps{
+                sh "curl -XGET 'http://localhost:8080'"
+            }
+        }
+        stage('Stop that shit') {
+            steps{
+                bat "taskkill /IM javaw.exe /F"
+            }
+            
+            post{
+                success{
+                echo "GET OUT OF MY SWAMP!"
+                }
+                always { 
+                    cleanWs()
+                }
+            }
+        }
+    }
+}
