@@ -33,7 +33,8 @@ pipeline {
         stage('Install') {
             steps {
                 // Just launch that jar, mate.
-                sh "java -jar rest/target/rest-0.0.1-SNAPSHOT.jar &"
+                sh "javaw -jar rest/target/rest-0.0.1-SNAPSHOT.jar &"
+                sh "sleep 10s"
             }
         }
         stage('Test') {
