@@ -83,6 +83,7 @@
 
     - name: Authority - TEST HIM!
       docker_container:
-        name: hello-world
-        image: hello-world
+        name: web
+        image: nginx
+        published_ports: 80:80
         state: started
