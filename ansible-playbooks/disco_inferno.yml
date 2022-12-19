@@ -1,0 +1,88 @@
+- name: Testing playbooks and stuff
+  hosts: jenkins
+  tasks:
+    - name: Savoir Faire - Scream some shit RIGHT NOW
+      ansible.builtin.debug:
+        msg: HARD CORE!!!
+
+    - name: Volition - Get Jenkins Repo! YOU DESERVE IT!!!
+      apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        state: present
+
+    - name: Check repo
+      apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binary/
+        state: present
+
+    - name: apt update
+      apt:
+        update_cache: yes
+        state: latest
+
+    - name: Install java
+      apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Install jenkins
+      apt:
+        name: jenkins
+        state: latest
+
+    - name: daemon-reload to pick up config changes
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Start jenkins
+      ansible.builtin.systemd:
+        name: jenkins
+        state: started
+
+- name: Testing but MEGA
+  hosts: docker
+  tasks:
+    - name: Shivers - You ARE the HARD CORE
+      ansible.builtin.debug:
+        msg: HARD CORE TO THE MEGA!!!
+
+    - name: Suggestion - Maybe we should install some other things first?
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Authority - show them that you ARE THE LAW! Install GPG key.
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repo
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update cache and install Docker
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Docker module for python
+      pip:
+        name: docker
+
+    - name: Electrochemistry - Now the fun starts!
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+
+    - name: Authority - TEST HIM!
+      docker_container:
+        name: hello-world
+        image: hello-world
+        state: started
