@@ -139,13 +139,13 @@
 
     - name: Additional settings 1
       ansible.builtin.lineinfile:
-        path: etc/etc/mysql/mysql.conf.d/mysqld.cnf
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
         search_string: 'bind-address            = 127.0.0.1'
         line: bind-address            = 0.0.0.0
 
     - name: Additional settings 2
       ansible.builtin.lineinfile:
-        path: etc/etc/mysql/mysql.conf.d/mysqld.cnf
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
         search_string: 'mysqlx-bind-address     = 127.0.0.1'
         line: mysqlx-bind-address     = 0.0.0.0
 
