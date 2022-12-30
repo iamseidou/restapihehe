@@ -151,5 +151,5 @@
 
     - name: Restart mysql
       ansible.builtin.systemd:
-        name: jenkins
+        name: mysql
         state: restarted
