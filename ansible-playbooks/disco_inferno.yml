@@ -1,5 +1,5 @@
 - name: Testing playbooks and stuff
-  hosts: jenkins
+  hosts: nemo
   tasks:
     - name: Savoir Faire - Scream some shit RIGHT NOW
       ansible.builtin.debug:
@@ -40,7 +40,7 @@
         state: started
 
 - name: Testing but MEGA
-  hosts: docker
+  hosts: nautilus
   tasks:
     - name: Shivers - You ARE the HARD CORE
       ansible.builtin.debug:
@@ -87,3 +87,69 @@
         image: nginx
         published_ports: 80:80
         state: started
+
+- name: Tartarus ascends
+  hosts: megaera
+  tasks:
+    - name: I am alive!
+      ansible.builtin.debug:
+        msg: ULTRA CORE!!!
+
+    - name: Update everything
+      apt:
+        update_cache: yes
+        state: latest
+
+    - name: Install python
+      apt:
+        pkg:
+          - python3-pip
+        state: latest
+        update_cache: true
+
+    - name: Make sure pymysql is present
+      pip:
+          name: pymysql
+          state: present
+
+    - name: Install mysql
+      apt:
+        name: mysql-server
+        state: latest
+
+    - name: start
+      ansible.builtin.systemd:
+        name: mysql
+        state: started
+
+    - name: Create database
+      mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: f1shitshow
+        state: present
+
+    - name: Create admin user
+      mysql_user:
+        name: admin
+        password: admin
+        host: "%"
+        priv: "*.*:ALL,GRANT"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Additional settings 1
+      ansible.builtin.lineinfile:
+        path: etc/etc/mysql/mysql.conf.d/mysqld.cnf
+        search_string: 'bind-address            = 127.0.0.1'
+        line: bind-address            = 0.0.0.0
+
+    - name: Additional settings 2
+      ansible.builtin.lineinfile:
+        path: etc/etc/mysql/mysql.conf.d/mysqld.cnf
+        search_string: 'mysqlx-bind-address     = 127.0.0.1'
+        line: mysqlx-bind-address     = 0.0.0.0
+
+    - name: Restart mysql
+      ansible.builtin.systemd:
+        name: jenkins
+        state: restarted

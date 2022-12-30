@@ -1,0 +1,70 @@
+- name: let's test it
+  hosts: nautilus
+  vars:
+    project: elysium_restapi
+    prop_path: rest/src/main/resources/application.properties
+  tasks:
+  - name: Show host's ip
+    debug:
+      msg: "{{ ansible_ssh_host }}"
+
+  - name: Create a directory
+    ansible.builtin.file:
+      path: "/home/ubuntu/{{ project }}"
+      state: directory
+      mode: '0755'
+
+  - name: Clone repo
+    ansible.builtin.git:
+      repo: 'https://github.com/iamseidou/restapihehe.git'
+      dest: "/home/ubuntu/{{ project }}"
+      clone: yes
+      update: yes
+
+  - name: Minor tweak before start
+    ansible.builtin.lineinfile:
+      path: "/home/ubuntu/{{ project }}/{{ prop_path }}"
+      search_string: 'spring.datasource.url=jdbc:mysql://localhost:3306/f1shitshow?useSSL=false&serverTimezone=UTC'
+      line: spring.datasource.url=jdbc:mysql://52.29.66.32:3306/f1shitshow?useSSL=false&serverTimezone=UTC
+
+  - name: Dir check
+    shell:
+      "pwd"
+
+  - name: Another minor tweak
+    ansible.builtin.lineinfile:
+      path: "/home/ubuntu/{{ project }}/Dockerfile"
+      search_string: 'COPY restapihehe/rest/src demolahehe/src'
+      line: COPY rest/src demolahehe/src
+
+  - name: Another minor tweak v2.0
+    ansible.builtin.lineinfile:
+      path: "/home/ubuntu/{{ project }}/Dockerfile"
+      search_string: 'COPY restapihehe/rest/pom.xml /demolahehe'
+      line: COPY rest/pom.xml /demolahehe
+
+  - name: Let the magic begin
+    docker_image:
+      name: "{{ project }}"
+      build:
+        path: "/home/ubuntu/{{ project }}"
+        dockerfile: "/home/ubuntu/{{ project }}/Dockerfile"
+        pull: no
+        args:
+          log_volume: /var/log/myapp
+          listen_port: 8080
+      source: build
+      state: present
+
+  - name: Start container
+    docker_container:
+      name: "{{ project }}"
+      image: "{{ project }}"
+      published_ports: 8080:8080
+      state: started
+
+  - name: Final test begins!
+    uri:
+      url: http://localhost:8080
+      method: GET
+
